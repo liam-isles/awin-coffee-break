@@ -6,15 +6,15 @@ import spock.lang.Specification
 
 import static org.assertj.core.api.Assertions.assertThat
 
-class SlackNotifierSpec extends Specification {
+class EmailNotifierSpec extends Specification {
 
     def "testStatusOfNotificationIsTrue"() {
         given:
         def staff = new StaffMember()
-        staff.setSlackIdentifier("ABC123")
+        staff.setEmail("ABC123@awin.com")
         def preference = new CoffeeBreakPreference("drink", "coffee", staff, null)
 
-        def notificationService = new SlackNotifier()
+        def notificationService = new EmailNotifier()
 
         when:
         def status = notificationService.notifyStaffMember(staff, [preference])
@@ -27,7 +27,7 @@ class SlackNotifierSpec extends Specification {
         given:
         def staff = new StaffMember()
         def preference = new CoffeeBreakPreference("drink", "tea", staff, null)
-        def notificationService = new SlackNotifier()
+        def notificationService = new EmailNotifier()
 
         when:
         def status = notificationService.notifyStaffMember(staff, [preference])

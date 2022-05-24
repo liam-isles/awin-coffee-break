@@ -13,6 +13,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.ElementCollection;
 import javax.persistence.Table;
 
 @Entity
@@ -38,8 +39,12 @@ public class CoffeeBreakPreference {
     @Column
     Instant requestedDate;
 
+    @ElementCollection
     @Column
     Map<String, String> details;
+
+    public CoffeeBreakPreference() {
+    }
 
     public CoffeeBreakPreference(
           final String type, final String subType, final StaffMember requestedBy, final Map<String, String> details

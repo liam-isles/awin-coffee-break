@@ -4,16 +4,14 @@ import com.awin.coffeebreak.entity.CoffeeBreakPreference;
 import com.awin.coffeebreak.entity.StaffMember;
 import java.util.List;
 
-public class SlackNotifier {
+public class EmailNotifier {
 
     /**
-     * Imagine that this method:
-     * Sends a notification to the user on Slack that their coffee break refreshment today will be $preference
-     * returns true of false status of notification sent
+        Method to notify staff member via email of their coffee preference.
      */
     public boolean notifyStaffMember(final StaffMember staffMember, final List<CoffeeBreakPreference> preferences) {
 
-        if (staffMember.getSlackIdentifier() == "") {
+        if (staffMember.getEmail().isEmpty()) {
             throw new RuntimeException();
         }
 

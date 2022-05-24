@@ -21,9 +21,6 @@ public class StaffMember {
     @Column
     String email;
 
-    @Column
-    String slackIdentifier;
-
     @OneToMany
     List<CoffeeBreakPreference> coffeeBreakPreferences = new ArrayList<>();
 
@@ -45,14 +42,6 @@ public class StaffMember {
 
     public void setEmail(final String email) {
         this.email = email;
-    }
-
-    public String getSlackIdentifier() {
-        return slackIdentifier;
-    }
-
-    public void setSlackIdentifier(final String slackIdentifier) {
-        this.slackIdentifier = slackIdentifier;
     }
 
     public List<CoffeeBreakPreference> getCoffeeBreakPreferences() {
