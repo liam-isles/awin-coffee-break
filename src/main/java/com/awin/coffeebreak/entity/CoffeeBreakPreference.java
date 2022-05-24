@@ -1,5 +1,7 @@
 package com.awin.coffeebreak.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.sql.Date;
 import java.time.Instant;
 import java.util.HashMap;
@@ -25,6 +27,7 @@ public class CoffeeBreakPreference {
     public static List<String> FOOD_TYPES = List.of("sandwich", "crisps", "toast");
 
     @Id
+    @JsonProperty("id")
     Integer id;
 
     @Column
@@ -65,11 +68,15 @@ public class CoffeeBreakPreference {
         this.type = type;
 
         this.requestedBy = requestedBy;
-        if(!details.isEmpty()) {
-            setDetails(details);
-        } else {
+        if(details == null) {
             setDetails(new HashMap<>());
+        } else {
+            setDetails(details);
         }
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public String getType() {

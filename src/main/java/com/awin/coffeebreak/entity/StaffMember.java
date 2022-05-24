@@ -1,5 +1,7 @@
 package com.awin.coffeebreak.entity;
 
+import org.springframework.context.annotation.Configuration;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -9,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
+@Configuration
 @Table(name = "staff_member")
 public class StaffMember {
 
@@ -27,6 +30,8 @@ public class StaffMember {
     public Integer getId() {
         return id;
     }
+
+    public void setId(final Integer id) {this.id = id;}
 
     public String getName() {
         return name;

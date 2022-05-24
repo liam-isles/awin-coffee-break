@@ -4,16 +4,13 @@ import com.awin.coffeebreak.entity.CoffeeBreakPreference;
 import com.awin.coffeebreak.entity.StaffMember;
 import com.awin.coffeebreak.repository.CoffeeBreakPreferenceRepository;
 import com.awin.coffeebreak.repository.StaffMemberRepository;
-import com.awin.coffeebreak.services.SlackNotifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import org.springframework.http.HttpStatus;
+import com.awin.coffeebreak.services.EmailNotifier;
+
+import java.util.*;
+
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class CoffeeBreakPreferenceController {
@@ -22,9 +19,12 @@ public class CoffeeBreakPreferenceController {
     public StaffMemberRepository staffMemberRepository;
 
     public CoffeeBreakPreferenceController(
-          CoffeeBreakPreferenceRepository coffeeBreakPreferenceRepository
+          CoffeeBreakPreferenceRepository coffeeBreakPreferenceRepository,
+          StaffMemberRepository staffMemberRepository
     ) {
         this.coffeeBreakPreferenceRepository = coffeeBreakPreferenceRepository;
+        this.staffMemberRepository = staffMemberRepository;
+
     }
 
     /**
@@ -69,10 +69,54 @@ public class CoffeeBreakPreferenceController {
 
         List<CoffeeBreakPreference> preferences = new ArrayList<>();
 
-        SlackNotifier notifier = new SlackNotifier();
+        EmailNotifier notifier = new EmailNotifier();
         boolean ok = notifier.notifyStaffMember(staffMember.get(), preferences);
 
+
         return ResponseEntity.ok(ok ? "OK" : "NOT OK");
+    }
+
+    @PostMapping("/addNewStaff")
+    public ResponseEntity addNewStaffMember(
+            @RequestBody StaffMember newStaffMember) {
+
+        //request needs some usable data
+        if(newStaffMember == null) {
+            return ResponseEntity.badRequest()
+                   .body("Staff information required to add new staff member");
+        }
+
+        //saving details to repo
+        staffMemberRepository.save(newStaffMember);
+
+        return ResponseEntity.status(201)
+               .body("Staff member added with the following details: " +
+                       "\n id: " + newStaffMember.getId() +
+                       "\n name: " + newStaffMember.getName() +
+                       "\n email: " + newStaffMember.getEmail());
+    }
+
+    @PostMapping("/addPreference")
+    public ResponseEntity addPreference(
+            @RequestBody CoffeeBreakPreference coffeeBreakPreference) {
+        //doing a check on the ID to see if it already exists
+        Optional<StaffMember> staffMember = staffMemberRepository.findById(coffeeBreakPreference.getId());
+
+        //if it does not exist it is created as part of the process
+        if(staffMember.isEmpty()) {
+            StaffMember createNewStaff = new StaffMember();
+            createNewStaff = coffeeBreakPreference.getRequestedBy();
+            staffMemberRepository.save(createNewStaff);
+        }
+
+        Map<String, String> details = new HashMap<>();
+        details.put(coffeeBreakPreference.getId().toString(),coffeeBreakPreference.toString());
+        coffeeBreakPreference.setDetails(details);
+
+        coffeeBreakPreferenceRepository.save(coffeeBreakPreference);
+
+        return ResponseEntity.ok()
+                .body("preference added: \n " + coffeeBreakPreference);
     }
 
     private String getJsonForResponse(final List<CoffeeBreakPreference> list) {
