@@ -104,16 +104,25 @@ public class CoffeeBreakPreferenceController {
 
         //if it does not exist it is created as part of the process
         if(staffMember.isEmpty()) {
-            StaffMember createNewStaff = new StaffMember();
+            StaffMember createNewStaff;
             createNewStaff = coffeeBreakPreference.getRequestedBy();
             staffMemberRepository.save(createNewStaff);
         }
 
+
+        //setting details
         Map<String, String> details = new HashMap<>();
         details.put(coffeeBreakPreference.getId().toString(),coffeeBreakPreference.toString());
         coffeeBreakPreference.setDetails(details);
 
+        //updating staff member list of preferences
+        StaffMember existingStaff = coffeeBreakPreference.getRequestedBy();
+        List<CoffeeBreakPreference> staffPreferences = existingStaff.getCoffeeBreakPreferences();
+        staffPreferences.add(coffeeBreakPreference);
+        existingStaff.setCoffeeBreakPreferences(staffPreferences);
+
         coffeeBreakPreferenceRepository.save(coffeeBreakPreference);
+
 
         return ResponseEntity.ok()
                 .body("preference added: \n " + coffeeBreakPreference);
